@@ -1,0 +1,81 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>cybermaxke</groupId>
+	<artifactId>mcMMOStats</artifactId>
+	<version>0.1</version>
+	<name>mcMMOStats</name>
+	<description>Show the skills stats to you.</description>
+
+	<properties>
+		<BukkitVersion>1.5-R0.1-SNAPSHOT</BukkitVersion>
+		<mcMMOVersion>1.4.04-dev1</mcMMOVersion>
+		<MainClass>me.cybermaxke.mcmmostats.McMMOStats</MainClass>
+		<Author>Cybermaxke</Author>
+	</properties>
+	
+	<!-- Repositories -->
+	<repositories>
+		<repository>
+			<id>bukkit-repo</id>
+			<url>http://repo.bukkit.org/content/groups/public/</url>
+		</repository>
+
+		<repository>
+			<id>mcmmo-repo</id>
+			<url>http://repo.mcmmo.info/</url>
+		</repository>
+	</repositories>
+	
+	<!-- Dependencies -->
+	<dependencies>
+		<dependency>
+			<groupId>org.bukkit</groupId>
+			<artifactId>craftbukkit</artifactId>
+			<version>${BukkitVersion}</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>com.gmail.nossr50.mcMMO</groupId>
+			<artifactId>mcMMO</artifactId>
+			<version>${mcMMOVersion}</version>
+		</dependency>
+	</dependencies>
+  
+	<!-- Build configuration -->
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>2.5.1</version>
+				<configuration>
+					<source>1.6</source>
+					<target>1.6</target>
+				</configuration>
+			</plugin>
+		
+			<plugin>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>2.6</version>
+				<executions>
+					<execution>
+						<id>copy-resources</id>
+						<phase>validate</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${basedir}</outputDirectory>
+							<resources>          
+								<resource>
+									<directory>${basedir}/src/main/resources</directory>
+									<filtering>true</filtering>
+								</resource>
+							</resources>              
+						</configuration>            
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+</project>
