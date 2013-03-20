@@ -28,12 +28,10 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import com.gmail.nossr50.datatypes.skills.SkillType;
 import com.gmail.nossr50.events.experience.McMMOPlayerLevelUpEvent;
 import com.gmail.nossr50.events.experience.McMMOPlayerXpGainEvent;
 
 public class McMMOStats extends JavaPlugin implements Listener {
-	private static Map<SkillType, String> skillNames = new HashMap<SkillType, String>();
 	private static Map<String, StatsGui> statsGui = new HashMap<String, StatsGui>();
 	private static McMMOStats instance;
 
@@ -41,21 +39,15 @@ public class McMMOStats extends JavaPlugin implements Listener {
 	public void onEnable() {
 		instance = this;
 
-		this.getServer().getPluginManager().registerEvents(this, this);
-		new GuiCommand(this);
+		if (!this.getDataFolder().exists()) {
+			this.getDataFolder().mkdirs();
+		}
 
-		skillNames.put(SkillType.ACROBATICS, "Acrobatics");
-		skillNames.put(SkillType.ARCHERY, "Archery");
-		skillNames.put(SkillType.AXES, "Axes");
-		skillNames.put(SkillType.EXCAVATION, "Exavation");
-		skillNames.put(SkillType.FISHING, "Fishing");
-		skillNames.put(SkillType.HERBALISM, "Herbalism");
-		skillNames.put(SkillType.MINING, "Mining");
-		skillNames.put(SkillType.REPAIR, "Repairing");
-		skillNames.put(SkillType.SWORDS, "Swords");
-		skillNames.put(SkillType.TAMING, "Taming");
-		skillNames.put(SkillType.UNARMED, "Unarmed");
-		skillNames.put(SkillType.WOODCUTTING, "Woodcutting");
+		new GuiCommand(this);
+		new LanguageConfig(this);
+		new Config(this);
+
+		this.getServer().getPluginManager().registerEvents(this, this);
 	}
 
 	@Override
@@ -67,10 +59,6 @@ public class McMMOStats extends JavaPlugin implements Listener {
 		return instance;
 	}
 
-	public static String getSkillName(SkillType type) {
-		return skillNames.containsKey(type) ? skillNames.get(type) : null;
-	}
-
 	public static StatsGui getGui(Player player) {
 		return statsGui.get(player.getName());
 	}
@@ -79,12 +67,16 @@ public class McMMOStats extends JavaPlugin implements Listener {
 	public void onPlayerJoin(PlayerJoinEvent e) {
 		Player p = e.getPlayer();
 		statsGui.put(p.getName(), new StatsGui(p));
+		p.sendMessage(Config.isGuiShown(p) + "");
+		if (Config.isGuiShown(p)) {
+			getGui(p).show();
+		}
 	}
 
 	@EventHandler
 	public void onPlayerQuit(PlayerQuitEvent e) {
 		Player p = e.getPlayer();
-		statsGui.get(p.getName()).removeUpdater();
+		Config.setGuiShown(p, getGui(p).isShown());
 		statsGui.remove(p.getName());
 	}
 

@@ -44,6 +44,7 @@ public class StatsGui {
 	private Scoreboard scoreboard;
 	private ScoreboardObjective skillStats;
 
+	private boolean show = false;
 	private int i;
 	private int ticksBeforeReturn = 200;
 	private Updater updater;
@@ -59,14 +60,12 @@ public class StatsGui {
 		this.player = player;
 		this.mcplayer = UserManager.getPlayer(player);
 		this.skillStats = this.scoreboard.a("McMMOSkillStats", IObjective.b);
-		this.skillStats.a("Skill Stats");
+		this.skillStats.a(LanguageConfig.getName("SKILL_STATS"));
 
 		for (SkillType t : SkillType.values()) {
-			if (McMMOStats.getSkillName(t) != null) {
-				ScoreboardObjective obj = this.scoreboard.a("Sk" + t.toString(), IObjective.b);
-				obj.a(McMMOStats.getSkillName(t));
-				this.skills.put(t, obj);
-			}
+			ScoreboardObjective obj = this.scoreboard.a("Sk" + t.toString(), IObjective.b);
+			obj.a(LanguageConfig.getName(t));
+			this.skills.put(t, obj);
 		}
 
 		this.updater = new Updater(this);
@@ -86,20 +85,18 @@ public class StatsGui {
 		Map<String, Integer> m = new HashMap<String, Integer>();
 		PlayerProfile pr = this.mcplayer.getProfile();
 
-		m.put("Level", pr.getSkillLevel(type));
-		m.put("Required XP", pr.getXpToLevel(type));
-		m.put("Earned XP", pr.getSkillXpLevel(type));
+		m.put(LanguageConfig.getName("LEVEL"), pr.getSkillLevel(type));
+		m.put(LanguageConfig.getName("REQUIRED_XP"), pr.getXpToLevel(type));
+		m.put(LanguageConfig.getName("EARNED_XP"), pr.getSkillXpLevel(type));
 		this.sendScores(this.skills.get(type), m);
 	}
 
 	public void sendAllStats() {
 		Map<String, Integer> m = new HashMap<String, Integer>();
-		m.put("Power Level", this.mcplayer.getPowerLevel());
+		m.put(LanguageConfig.getName("POWER_LEVEL"), this.mcplayer.getPowerLevel());
 
 		for (SkillType t : SkillType.values()) {
-			if (McMMOStats.getSkillName(t) != null) {
-				m.put(McMMOStats.getSkillName(t), this.mcplayer.getProfile().getSkillLevel(t));
-			}
+			m.put(LanguageConfig.getName(t), this.mcplayer.getProfile().getSkillLevel(t));
 		}
 
 		this.sendScores(this.skillStats, m);
@@ -129,10 +126,13 @@ public class StatsGui {
 	}
 
 	public void show() {
-		PacketUtils.sendPacket(this.player, this.getCreatePacket(this.skillStats));
-		for (SkillType t : SkillType.values()) {
-			if (this.skills.containsKey(t)) {
-				PacketUtils.sendPacket(this.player, this.getCreatePacket(this.skills.get(t)));
+		if (!this.show) {
+			this.show = true;
+			PacketUtils.sendPacket(this.player, this.getCreatePacket(this.skillStats));
+			for (SkillType t : SkillType.values()) {
+				if (this.skills.containsKey(t)) {
+					PacketUtils.sendPacket(this.player, this.getCreatePacket(this.skills.get(t)));
+				}
 			}
 		}
 		PacketUtils.sendPacket(this.player, this.getDisplayPacket(1, this.skillStats));
@@ -140,15 +140,27 @@ public class StatsGui {
 	}
 
 	public void hide() {
-		PacketUtils.sendPacket(this.player, this.getRemovePacket(this.skillStats));
-		for (SkillType t : SkillType.values()) {
-			if (this.skills.containsKey(t)) {
-				PacketUtils.sendPacket(this.player, this.getRemovePacket(this.skills.get(t)));
+		if (this.show) {
+			this.show = false;
+			PacketUtils.sendPacket(this.player, this.getRemovePacket(this.skillStats));
+			for (SkillType t : SkillType.values()) {
+				if (this.skills.containsKey(t)) {
+					PacketUtils.sendPacket(this.player, this.getRemovePacket(this.skills.get(t)));
+				}
 			}
 		}
 	}
 
-	public void removeUpdater() {
+	public boolean isHidden() {
+		return !this.show;
+	}
+
+	public boolean isShown() {
+		return this.show;
+	}
+
+	public void remove() {
+		this.hide();
 		this.updater.cancel();
 	}
 
