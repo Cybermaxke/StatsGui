@@ -70,7 +70,6 @@ public class McMMOStats extends JavaPlugin implements Listener {
 	public void onPlayerJoin(PlayerJoinEvent e) {
 		Player p = e.getPlayer();
 		statsGui.put(p.getName(), new StatsGui(p));
-		p.sendMessage(Config.isGuiShown(p) + "");
 		if (Config.isGuiShown(p) && p.hasPermission(new Permission("mcMMOStatsGui.UseGui", PermissionDefault.OP))) {
 			getGui(p).show();
 		}
