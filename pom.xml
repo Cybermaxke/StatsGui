@@ -2,12 +2,12 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>cybermaxke</groupId>
 	<artifactId>mcMMOStats</artifactId>
-	<version>0.1</version>
+	<version>1.4</version>
 	<name>mcMMOStats</name>
 	<description>Show the skills stats to you.</description>
 
 	<properties>
-		<BukkitVersion>1.5-R0.1-SNAPSHOT</BukkitVersion>
+		<BukkitVersion>1.5.1-R0.1-SNAPSHOT</BukkitVersion>
 		<mcMMOVersion>1.4.04-dev1</mcMMOVersion>
 		<MainClass>me.cybermaxke.mcmmostats.McMMOStats</MainClass>
 		<Author>Cybermaxke</Author>

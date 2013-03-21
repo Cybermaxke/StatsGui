@@ -24,13 +24,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import net.minecraft.server.v1_5_R1.IObjective;
-import net.minecraft.server.v1_5_R1.Packet206SetScoreboardObjective;
-import net.minecraft.server.v1_5_R1.Packet207SetScoreboardScore;
-import net.minecraft.server.v1_5_R1.Packet208SetScoreboardDisplayObjective;
-import net.minecraft.server.v1_5_R1.Scoreboard;
-import net.minecraft.server.v1_5_R1.ScoreboardObjective;
-import net.minecraft.server.v1_5_R1.ScoreboardScore;
+import net.minecraft.server.v1_5_R2.IScoreboardCriteria;
+import net.minecraft.server.v1_5_R2.Packet206SetScoreboardObjective;
+import net.minecraft.server.v1_5_R2.Packet207SetScoreboardScore;
+import net.minecraft.server.v1_5_R2.Packet208SetScoreboardDisplayObjective;
+import net.minecraft.server.v1_5_R2.Scoreboard;
+import net.minecraft.server.v1_5_R2.ScoreboardObjective;
+import net.minecraft.server.v1_5_R2.ScoreboardScore;
 
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -59,12 +59,12 @@ public class StatsGui {
 		this.scoreboard = new Scoreboard();
 		this.player = player;
 		this.mcplayer = UserManager.getPlayer(player);
-		this.skillStats = this.scoreboard.a("McMMOSkillStats", IObjective.b);
-		this.skillStats.a(LanguageConfig.getName("SKILL_STATS"));
+		this.skillStats = this.scoreboard.registerObjective("McMMOSkillStats", IScoreboardCriteria.b);
+		this.skillStats.setDisplayName(LanguageConfig.getName("SKILL_STATS"));
 
 		for (SkillType t : SkillType.values()) {
-			ScoreboardObjective obj = this.scoreboard.a("Sk" + t.toString(), IObjective.b);
-			obj.a(LanguageConfig.getName(t));
+			ScoreboardObjective obj = this.scoreboard.registerObjective("Sk" + t.toString(), IScoreboardCriteria.b);
+			obj.setDisplayName(LanguageConfig.getName(t));
 			this.skills.put(t, obj);
 		}
 
@@ -106,8 +106,8 @@ public class StatsGui {
 		List<ScoreboardScore> scores = new ArrayList<ScoreboardScore>();
 
 		for (Entry<String, Integer> en : values.entrySet()) {
-			ScoreboardScore s = this.scoreboard.a(en.getKey(), objective);
-			s.c(en.getValue());
+			ScoreboardScore s = this.scoreboard.getPlayerScoreForObjective(en.getKey(), objective);
+			s.setScore(en.getValue());
 			scores.add(s);
 		}
 
