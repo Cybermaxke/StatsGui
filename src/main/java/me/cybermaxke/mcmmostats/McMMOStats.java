@@ -63,14 +63,17 @@ public class McMMOStats extends JavaPlugin implements Listener {
 	}
 
 	public static StatsGui getGui(Player player) {
+		if (!statsGui.containsKey(player.getName())) {
+			statsGui.put(player.getName(), new StatsGui(player));
+		}
 		return statsGui.get(player.getName());
 	}
 
 	@EventHandler
 	public void onPlayerJoin(PlayerJoinEvent e) {
 		Player p = e.getPlayer();
-		statsGui.put(p.getName(), new StatsGui(p));
-		if (Config.isGuiShown(p) && p.hasPermission(new Permission("mcMMOStatsGui.UseGui", PermissionDefault.OP))) {
+		getGui(p);
+		if (Config.isGuiShown(p) && p.hasPermission(new Permission("mcmmo.usegui", PermissionDefault.OP))) {
 			getGui(p).show();
 		}
 	}
@@ -97,6 +100,6 @@ public class McMMOStats extends JavaPlugin implements Listener {
 	}
 
 	public boolean hasSkillPermission(Player player, SkillType type) {
-		return player.hasPermission(new Permission("mcMMOStatsGui.UseSkillGui." + type.toString(), PermissionDefault.OP));
+		return player.hasPermission(new Permission("mcmmo.skills." + type.toString(), PermissionDefault.OP));
 	}
 }

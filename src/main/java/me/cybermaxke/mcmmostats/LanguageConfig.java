@@ -40,7 +40,7 @@ public class LanguageConfig {
 		skills.put(SkillType.ACROBATICS, "Acrobatics");
 		skills.put(SkillType.ARCHERY, "Archery");
 		skills.put(SkillType.AXES, "Axes");
-		skills.put(SkillType.EXCAVATION, "Exavation");
+		skills.put(SkillType.EXCAVATION, "Excavation");
 		skills.put(SkillType.FISHING, "Fishing");
 		skills.put(SkillType.HERBALISM, "Herbalism");
 		skills.put(SkillType.MINING, "Mining");

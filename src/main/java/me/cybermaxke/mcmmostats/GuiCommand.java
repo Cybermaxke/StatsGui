@@ -42,7 +42,7 @@ public class GuiCommand implements CommandExecutor {
 
 		Player p = (Player) sender;
 
-		if (!p.hasPermission(new Permission("mcMMOStatsGui.UseCommand", PermissionDefault.OP))) {
+		if (!p.hasPermission(new Permission("mcmmo.useguicommand", PermissionDefault.OP))) {
 			p.sendMessage(ChatColor.RED + "I'm sorry, but you don't have permission to perform this command. ");
 			return true;
 		}
