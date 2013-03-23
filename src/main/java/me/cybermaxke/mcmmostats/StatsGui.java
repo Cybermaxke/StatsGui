@@ -96,7 +96,9 @@ public class StatsGui {
 		m.put(LanguageConfig.getName("POWER_LEVEL"), this.mcplayer.getPowerLevel());
 
 		for (SkillType t : SkillType.values()) {
-			m.put(LanguageConfig.getName(t), this.mcplayer.getProfile().getSkillLevel(t));
+			if (Permissions.hasSkillPermission(this.player, t)) {
+				m.put(LanguageConfig.getName(t), this.mcplayer.getProfile().getSkillLevel(t));
+			}
 		}
 
 		this.sendScores(this.skillStats, m);

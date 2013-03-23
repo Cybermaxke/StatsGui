@@ -23,8 +23,6 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.permissions.Permission;
-import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class GuiCommand implements CommandExecutor {
@@ -41,8 +39,7 @@ public class GuiCommand implements CommandExecutor {
 		}
 
 		Player p = (Player) sender;
-
-		if (!p.hasPermission(new Permission("mcmmo.useguicommand", PermissionDefault.OP))) {
+		if (!Permissions.hasUseGuiPermission(p)) {
 			p.sendMessage(ChatColor.RED + "I'm sorry, but you don't have permission to perform this command. ");
 			return true;
 		}
