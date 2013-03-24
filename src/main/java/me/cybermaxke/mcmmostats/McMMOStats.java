@@ -78,7 +78,9 @@ public class McMMOStats extends JavaPlugin implements Listener {
 	@EventHandler
 	public void onPlayerQuit(PlayerQuitEvent e) {
 		Player p = e.getPlayer();
-		Config.setGuiShown(p, getGui(p).isShown());
+		StatsGui g = getGui(p);
+		Config.setGuiShown(p, g.isShown());
+		g.remove();
 		statsGui.remove(p.getName());
 	}
 

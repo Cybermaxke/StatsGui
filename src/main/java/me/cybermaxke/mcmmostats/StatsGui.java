@@ -45,7 +45,6 @@ public class StatsGui {
 	private ScoreboardObjective skillStats;
 
 	private boolean show = false;
-	private int i;
 	private int ticksBeforeReturn = 200;
 	private Updater updater;
 
@@ -67,21 +66,16 @@ public class StatsGui {
 			obj.setDisplayName(LanguageConfig.getName(t));
 			this.skills.put(t, obj);
 		}
-
-		this.updater = new Updater(this);
-		this.updater.runTaskTimer(McMMOStats.getInstance(), 0, 1);
 	}
 
-	public void onTick() {
-		++this.i;
-		if (this.i > this.ticksBeforeReturn) {
-			this.i = 0;
-			this.sendAllStats();
-		}
+	public void resetUpdater() {
+		this.updater.cancel();
+		this.updater = new Updater(this);
+		this.updater.runTaskLater(McMMOStats.getInstance(), this.ticksBeforeReturn);
 	}
 
 	public void sendSkillStats(SkillType type) {
-		this.i = 0;
+		this.resetUpdater();
 		Map<String, Integer> m = new HashMap<String, Integer>();
 		PlayerProfile pr = this.mcplayer.getProfile();
 
@@ -195,7 +189,8 @@ public class StatsGui {
 
 		@Override
 		public void run() {
-			this.gui.onTick();
+			this.gui.sendAllStats();
+			this.gui.resetUpdater();
 		}
 	}
 }
