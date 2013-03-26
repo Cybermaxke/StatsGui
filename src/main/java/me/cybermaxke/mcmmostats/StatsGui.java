@@ -18,9 +18,7 @@
  */
 package me.cybermaxke.mcmmostats;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -48,7 +46,7 @@ public class StatsGui {
 	private int ticksBeforeReturn = 200;
 	private Updater updater;
 
-	private Map<ScoreboardObjective, List<ScoreboardScore>> last = new HashMap<ScoreboardObjective, List<ScoreboardScore>>();
+	private Map<String, Map<String, Integer>> last = new HashMap<String, Map<String, Integer>>();
 	private Map<SkillType, ScoreboardObjective> skills = new HashMap<SkillType, ScoreboardObjective>();
 
 	private Player player;
@@ -99,26 +97,32 @@ public class StatsGui {
 	}
 
 	public void sendScores(ScoreboardObjective objective, Map<String, Integer> values) {
-		List<ScoreboardScore> scores = new ArrayList<ScoreboardScore>();
+		Map<String, Integer> last = this.last.containsKey(objective.getName()) ? this.last.get(objective.getName()) : null;
+		Map<String, ScoreboardScore> scores = new HashMap<String, ScoreboardScore>();
 
 		for (Entry<String, Integer> en : values.entrySet()) {
 			ScoreboardScore s = this.scoreboard.getPlayerScoreForObjective(en.getKey(), objective);
 			s.setScore(en.getValue());
-			scores.add(s);
+			scores.put(en.getKey(), s);
 		}
 
-		if (this.last.containsKey(objective)) {
-			for (ScoreboardScore s : this.last.get(objective)) {
-				PacketUtils.sendPacket(this.player, this.getRemoveScorePacket(s));
+		if (last != null) {
+			for (Entry<String, Integer> en : last.entrySet()) {
+				if (!values.containsKey(en.getKey())) {
+					PacketUtils.sendPacket(this.player, this.getRemoveScorePacket(scores.get(en.getKey())));
+				}
 			}
 		}
 
-		for (ScoreboardScore s : scores) {
-			PacketUtils.sendPacket(this.player, this.getCreateScorePacket(s));
+		for (Entry<String, Integer> en : values.entrySet()) {
+			String k = en.getKey();
+			if (last == null || !last.containsKey(k) || last.get(k) != en.getValue()) {
+				PacketUtils.sendPacket(this.player, this.getCreateScorePacket(scores.get(k)));
+			}
 		}
 
 		PacketUtils.sendPacket(this.player, this.getDisplayPacket(1, objective));
-		this.last.put(objective, scores);
+		this.last.put(objective.getName(), values);
 	}
 
 	public void show() {
