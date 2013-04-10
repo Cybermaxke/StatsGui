@@ -30,76 +30,88 @@ import com.gmail.nossr50.datatypes.skills.SkillType;
 
 public class LanguageConfig {
 	private static File file;
+	private static YamlConfiguration c;
+
 	private static Map<SkillType, String> skills = new HashMap<SkillType, String>();
 	private static Map<String, String> names = new HashMap<String, String>();
 
 	public LanguageConfig(Plugin plugin) {
-		file = new File(plugin.getDataFolder(), "Language.yml");
-		YamlConfiguration c = null;
-
-		skills.put(SkillType.ACROBATICS, "Acrobatics");
-		skills.put(SkillType.ARCHERY, "Archery");
-		skills.put(SkillType.AXES, "Axes");
-		skills.put(SkillType.EXCAVATION, "Excavation");
-		skills.put(SkillType.FISHING, "Fishing");
-		skills.put(SkillType.HERBALISM, "Herbalism");
-		skills.put(SkillType.MINING, "Mining");
-		skills.put(SkillType.REPAIR, "Repairing");
-		skills.put(SkillType.SWORDS, "Swords");
-		skills.put(SkillType.TAMING, "Taming");
-		skills.put(SkillType.UNARMED, "Unarmed");
-		skills.put(SkillType.WOODCUTTING, "Woodcutting");
-		skills.put(SkillType.SMELTING, "Smelting");
-		names.put("LEVEL", "Level");
-		names.put("REQUIRED_XP", "Required XP");
-		names.put("EARNED_XP", "Earned XP");
-		names.put("POWER_LEVEL", "Power Level");
-		names.put("SKILL_STATS", "Skill Stats");
-
-		if (!file.exists()) {
-			c = new YamlConfiguration();
-			for (Entry<SkillType, String> en : skills.entrySet()) {
-				c.set("Skills." + en.getKey().toString(), en.getValue());
+		try {
+			if (!plugin.getDataFolder().exists()) {
+				plugin.getDataFolder().mkdirs();
 			}
 
-			for (Entry<String, String> en : names.entrySet()) {
-				c.set(en.getKey(), en.getValue());
-			}
-
-			try {
+			file = new File(plugin.getDataFolder(), "Language.yml");
+			if (!file.exists()) {
 				file.createNewFile();
-				c.save(file);
-			} catch (Exception e) {}
-		} else {
-			c = YamlConfiguration.loadConfiguration(file);
-
-			for (SkillType t : skills.keySet()) {
-				if (c.contains("Skills." + t.toString())) {
-					String s = c.getString("Skills." + t.toString());
-					if (s.length() > 16) {
-						s = s.substring(0, 16);
-					}
-					skills.put(t, s);
-				}
 			}
+		} catch (Exception e) {}
 
-			for (String s : names.keySet()) {
-				if (c.contains(s)) {
-					String s1 = c.getString(s);
-					if (s1.length() > 16) {
-						s1 = s.substring(0, 16);
-					}
-					names.put(s, s1);
-				}
-			}
-		}
+		add(SkillType.ACROBATICS, "Acrobatics");
+		add(SkillType.ARCHERY, "Archery");
+		add(SkillType.AXES, "Axes");
+		add(SkillType.EXCAVATION, "Excavation");
+		add(SkillType.FISHING, "Fishing");
+		add(SkillType.HERBALISM, "Herbalism");
+		add(SkillType.MINING, "Mining");
+		add(SkillType.REPAIR, "Repairing");
+		add(SkillType.SWORDS, "Swords");
+		add(SkillType.TAMING, "Taming");
+		add(SkillType.UNARMED, "Unarmed");
+		add(SkillType.WOODCUTTING, "Woodcutting");
+		add(SkillType.SMELTING, "Smelting");
+		add("LEVEL", "Level");
+		add("REQUIRED_XP", "Required XP");
+		add("EARNED_XP", "Earned XP");
+		add("POWER_LEVEL", "Power Level");
+		add("SKILL_STATS", "Skill Stats");
+
+		load();
 	}
 
-	public static String getName(SkillType type) {
+	public static void load() {
+		c = YamlConfiguration.loadConfiguration(file);
+
+		for (Entry<String, String> en : names.entrySet()) {
+			String k = en.getKey();
+			if (!c.contains(k)) {
+				c.set(k, Config.tralslateColorCodeToNew(en.getValue()));
+			} else {
+				names.put(k, Config.translateAlternateColorCodes(c.getString(k)));
+			}
+		}
+
+		for (Entry<SkillType, String> t : skills.entrySet()) {
+			String k = "Skills." + t.getKey().toString();
+			if (!c.contains(k)) {
+				c.set(k, Config.tralslateColorCodeToNew(t.getValue()));
+			} else {
+				String s = c.getString(k);
+				if (s.length() > 16) {
+					s = s.substring(0, 16);
+				}
+				skills.put(t.getKey(), Config.translateAlternateColorCodes(s));
+			}
+		}
+
+		try {
+			c.save(file);
+		} catch (Exception e) {}
+	}
+
+	public static void add(String path, String def) {
+		names.put(path, def);
+	}
+
+	public static void add(SkillType type, String def) {
+		skills.put(type, def);
+	}
+
+	public static String get(SkillType type) {
 		return skills.containsKey(type)? skills.get(type) : null;
 	}
 
-	public static String getName(String string) {
+	public static String get(String string) {
 		return names.containsKey(string) ? names.get(string) : null;
 	}
 }

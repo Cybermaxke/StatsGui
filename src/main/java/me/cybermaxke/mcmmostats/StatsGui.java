@@ -57,17 +57,19 @@ public class StatsGui {
 		this.player = player;
 		this.mcplayer = UserManager.getPlayer(player);
 		this.skillStats = this.scoreboard.registerObjective("McMMOSkillStats", IScoreboardCriteria.b);
-		this.skillStats.setDisplayName(LanguageConfig.getName("SKILL_STATS"));
+		this.skillStats.setDisplayName(LanguageConfig.get("SKILL_STATS"));
 
 		for (SkillType t : SkillType.values()) {
 			ScoreboardObjective obj = this.scoreboard.registerObjective("Sk" + t.toString(), IScoreboardCriteria.b);
-			obj.setDisplayName(LanguageConfig.getName(t));
+			obj.setDisplayName(LanguageConfig.get(t));
 			this.skills.put(t, obj);
 		}
 	}
 
 	public void resetUpdater() {
-		this.updater.cancel();
+		if (this.updater != null) {
+			this.updater.cancel();
+		}
 		this.updater = new Updater(this);
 		this.updater.runTaskLater(McMMOStats.getInstance(), this.ticksBeforeReturn);
 	}
@@ -77,19 +79,19 @@ public class StatsGui {
 		Map<String, Integer> m = new HashMap<String, Integer>();
 		PlayerProfile pr = this.mcplayer.getProfile();
 
-		m.put(LanguageConfig.getName("LEVEL"), pr.getSkillLevel(type));
-		m.put(LanguageConfig.getName("REQUIRED_XP"), pr.getXpToLevel(type));
-		m.put(LanguageConfig.getName("EARNED_XP"), pr.getSkillXpLevel(type));
+		m.put(LanguageConfig.get("LEVEL"), pr.getSkillLevel(type));
+		m.put(LanguageConfig.get("REQUIRED_XP"), pr.getXpToLevel(type));
+		m.put(LanguageConfig.get("EARNED_XP"), pr.getSkillXpLevel(type));
 		this.sendScores(this.skills.get(type), m);
 	}
 
 	public void sendAllStats() {
 		Map<String, Integer> m = new HashMap<String, Integer>();
-		m.put(LanguageConfig.getName("POWER_LEVEL"), this.mcplayer.getPowerLevel());
+		m.put(LanguageConfig.get("POWER_LEVEL"), this.mcplayer.getPowerLevel());
 
 		for (SkillType t : SkillType.values()) {
 			if (Permissions.hasSkillPermission(this.player, t)) {
-				m.put(LanguageConfig.getName(t), this.mcplayer.getProfile().getSkillLevel(t));
+				m.put(LanguageConfig.get(t), this.mcplayer.getProfile().getSkillLevel(t));
 			}
 		}
 
@@ -161,7 +163,9 @@ public class StatsGui {
 
 	public void remove() {
 		this.hide();
-		this.updater.cancel();
+		if (this.updater != null) {
+			this.updater.cancel();
+		}
 	}
 
 	private Packet208SetScoreboardDisplayObjective getDisplayPacket(int slot, ScoreboardObjective objective) {

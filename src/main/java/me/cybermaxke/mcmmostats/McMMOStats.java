@@ -44,8 +44,8 @@ public class McMMOStats extends JavaPlugin implements Listener {
 		}
 
 		new GuiCommand(this);
-		new LanguageConfig(this);
 		new Config(this);
+		new LanguageConfig(this);
 
 		this.getServer().getPluginManager().registerEvents(this, this);
 	}
