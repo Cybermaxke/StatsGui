@@ -7,7 +7,9 @@
 	<description>Show the skills stats to you.</description>
 
 	<properties>
-		<BukkitVersion>1.5.1-R0.2-SNAPSHOT</BukkitVersion>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<BukkitVersion>1.5.1-R0.3-SNAPSHOT</BukkitVersion>
 		<mcMMOVersion>1.4.04-dev1</mcMMOVersion>
 		<MainClass>me.cybermaxke.mcmmostats.McMMOStats</MainClass>
 		<Author>Cybermaxke</Author>
@@ -43,6 +45,19 @@
   
 	<!-- Build configuration -->
 	<build>
+		<defaultGoal>clean install</defaultGoal>
+
+		<resources>
+			<resource>
+				<filtering>true</filtering>
+				<directory>src/main/resources</directory>
+				<targetPath>.</targetPath>
+				<includes>
+					<include>*.yml</include>
+				</includes>
+			</resource>
+		</resources>
+
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -52,29 +67,6 @@
 					<source>1.6</source>
 					<target>1.6</target>
 				</configuration>
-			</plugin>
-
-			<plugin>
-				<artifactId>maven-resources-plugin</artifactId>
-				<version>2.6</version>
-				<executions>
-					<execution>
-						<id>copy-resources</id>
-						<phase>compile</phase>
-						<goals>
-							<goal>copy-resources</goal>
-						</goals>
-						<configuration>
-							<outputDirectory>${basedir}</outputDirectory>
-							<resources>          
-								<resource>
-									<directory>${basedir}/src/main/resources</directory>
-									<filtering>true</filtering>
-								</resource>
-							</resources>              
-						</configuration>            
-					</execution>
-				</executions>
 			</plugin>
 
 			<plugin>
