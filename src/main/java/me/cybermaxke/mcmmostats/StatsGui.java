@@ -99,10 +99,10 @@ public class StatsGui {
 		Map<String, Integer> m = new HashMap<String, Integer>();
 		m.put(this.languageConfig.get("POWER_LEVEL"), this.mcplayer.getPowerLevel());
 
-		for (SkillType t : SkillType.values()) {
-			if (StatsPermissions.hasSkillPermission(this.player, t)) {
-				m.put(this.languageConfig.get(t.toString()),
-						this.mcplayer.getProfile().getSkillLevel(t));
+		for (SkillType type : SkillType.values()) {
+			if (StatsPermissions.hasSkillPermission(this.player, type)) {
+				m.put(this.languageConfig.get(type.toString()),
+						this.mcplayer.getProfile().getSkillLevel(type));
 			}
 		}
 
