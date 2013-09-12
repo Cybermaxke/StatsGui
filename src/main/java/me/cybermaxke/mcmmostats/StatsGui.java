@@ -19,19 +19,19 @@
 package me.cybermaxke.mcmmostats;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import net.minecraft.server.v1_5_R2.IScoreboardCriteria;
-import net.minecraft.server.v1_5_R2.Packet206SetScoreboardObjective;
-import net.minecraft.server.v1_5_R2.Packet207SetScoreboardScore;
-import net.minecraft.server.v1_5_R2.Packet208SetScoreboardDisplayObjective;
-import net.minecraft.server.v1_5_R2.Scoreboard;
-import net.minecraft.server.v1_5_R2.ScoreboardObjective;
-import net.minecraft.server.v1_5_R2.ScoreboardScore;
+import me.cybermaxke.mcmmostats.util.ConfigLanguage;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scoreboard.DisplaySlot;
+import org.bukkit.scoreboard.Objective;
+import org.bukkit.scoreboard.Scoreboard;
 
 import com.gmail.nossr50.datatypes.player.McMMOPlayer;
 import com.gmail.nossr50.datatypes.player.PlayerProfile;
@@ -39,29 +39,37 @@ import com.gmail.nossr50.datatypes.skills.SkillType;
 import com.gmail.nossr50.util.player.UserManager;
 
 public class StatsGui {
-	private Scoreboard scoreboard;
-	private ScoreboardObjective skillStats;
+	private final Plugin plugin;
+	private final Player player;
+	private final Scoreboard scoreboard;
+	private final ConfigLanguage languageConfig;
 
-	private boolean show = false;
+	private McMMOPlayer mcplayer;
+	private Objective skillStats;
+
 	private int ticksBeforeReturn = 200;
 	private Updater updater;
 
-	private Map<String, Map<String, Integer>> last = new HashMap<String, Map<String, Integer>>();
-	private Map<SkillType, ScoreboardObjective> skills = new HashMap<SkillType, ScoreboardObjective>();
+	private Map<String, List<String>> last = new HashMap<String, List<String>>();
+	private Map<SkillType, Objective> skills = new HashMap<SkillType, Objective>();
 
-	private Player player;
-	private McMMOPlayer mcplayer;
-
-	public StatsGui(Player player) {
-		this.scoreboard = new Scoreboard();
+	public StatsGui(Plugin plugin, ConfigLanguage languageConfig, Player player) {
+		this.plugin = plugin;
 		this.player = player;
+		this.languageConfig = languageConfig;
+		this.scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
+
 		this.mcplayer = UserManager.getPlayer(player);
-		this.skillStats = this.scoreboard.registerObjective("McMMOSkillStats", IScoreboardCriteria.b);
-		this.skillStats.setDisplayName(LanguageConfig.get("SKILL_STATS"));
+		if (this.mcplayer == null) {
+			this.mcplayer = UserManager.addUser(player);
+		}
+
+		this.skillStats = this.scoreboard.registerNewObjective("McMMOSkillStats", "dummy");
+		this.skillStats.setDisplayName(languageConfig.get("SKILL_STATS"));
 
 		for (SkillType t : SkillType.values()) {
-			ScoreboardObjective obj = this.scoreboard.registerObjective("Sk" + t.toString(), IScoreboardCriteria.b);
-			obj.setDisplayName(LanguageConfig.get(t));
+			Objective obj = this.scoreboard.registerNewObjective("Sk" + t.toString(), "dummy");
+			obj.setDisplayName(languageConfig.get(t.toString()));
 			this.skills.put(t, obj);
 		}
 	}
@@ -70,122 +78,71 @@ public class StatsGui {
 		if (this.updater != null) {
 			this.updater.cancel();
 		}
+
 		this.updater = new Updater(this);
-		this.updater.runTaskLater(McMMOStats.getInstance(), this.ticksBeforeReturn);
+		this.updater.runTaskLater(this.plugin, this.ticksBeforeReturn);
 	}
 
 	public void sendSkillStats(SkillType type) {
-		this.resetUpdater();
 		Map<String, Integer> m = new HashMap<String, Integer>();
 		PlayerProfile pr = this.mcplayer.getProfile();
 
-		m.put(LanguageConfig.get("LEVEL"), pr.getSkillLevel(type));
-		m.put(LanguageConfig.get("REQUIRED_XP"), pr.getXpToLevel(type));
-		m.put(LanguageConfig.get("EARNED_XP"), pr.getSkillXpLevel(type));
+		m.put(this.languageConfig.get("LEVEL"), pr.getSkillLevel(type));
+		m.put(this.languageConfig.get("REQUIRED_XP"), pr.getXpToLevel(type));
+		m.put(this.languageConfig.get("EARNED_XP"), pr.getSkillXpLevel(type));
+
 		this.sendScores(this.skills.get(type), m);
+		this.resetUpdater();
 	}
 
 	public void sendAllStats() {
 		Map<String, Integer> m = new HashMap<String, Integer>();
-		m.put(LanguageConfig.get("POWER_LEVEL"), this.mcplayer.getPowerLevel());
+		m.put(this.languageConfig.get("POWER_LEVEL"), this.mcplayer.getPowerLevel());
 
 		for (SkillType t : SkillType.values()) {
-			if (Permissions.hasSkillPermission(this.player, t)) {
-				m.put(LanguageConfig.get(t), this.mcplayer.getProfile().getSkillLevel(t));
+			if (StatsPermissions.hasSkillPermission(this.player, t)) {
+				m.put(this.languageConfig.get(t.toString()),
+						this.mcplayer.getProfile().getSkillLevel(t));
 			}
 		}
 
 		this.sendScores(this.skillStats, m);
 	}
 
-	public void sendScores(ScoreboardObjective objective, Map<String, Integer> values) {
-		Map<String, Integer> last = this.last.containsKey(objective.getName()) ? this.last.get(objective.getName()) : null;
-		Map<String, ScoreboardScore> scores = new HashMap<String, ScoreboardScore>();
-
-		for (Entry<String, Integer> en : values.entrySet()) {
-			ScoreboardScore s = this.scoreboard.getPlayerScoreForObjective(en.getKey(), objective);
-			s.setScore(en.getValue());
-			scores.put(en.getKey(), s);
-		}
-
-		if (last != null) {
-			for (Entry<String, Integer> en : last.entrySet()) {
-				if (!values.containsKey(en.getKey())) {
-					PacketUtils.sendPacket(this.player, this.getRemoveScorePacket(scores.get(en.getKey())));
-				}
+	public void sendScores(Objective objective, Map<String, Integer> values) {
+		if (this.last.containsKey(objective.getName())) {
+			for (String old : this.last.get(objective.getName())) {
+				this.scoreboard.resetScores(Bukkit.getOfflinePlayer(old));
 			}
 		}
 
 		for (Entry<String, Integer> en : values.entrySet()) {
-			String k = en.getKey();
-			if (last == null || !last.containsKey(k) || last.get(k) != en.getValue()) {
-				PacketUtils.sendPacket(this.player, this.getCreateScorePacket(scores.get(k)));
-			}
+			objective.getScore(Bukkit.getOfflinePlayer(en.getKey())).setScore(en.getValue());
 		}
 
-		PacketUtils.sendPacket(this.player, this.getDisplayPacket(1, objective));
-		this.last.put(objective.getName(), values);
+		objective.setDisplaySlot(DisplaySlot.SIDEBAR);
+		this.player.setScoreboard(this.scoreboard);
 	}
 
 	public void show() {
-		if (!this.show) {
-			this.show = true;
-			PacketUtils.sendPacket(this.player, this.getCreatePacket(this.skillStats));
-			for (SkillType t : SkillType.values()) {
-				if (this.skills.containsKey(t)) {
-					PacketUtils.sendPacket(this.player, this.getCreatePacket(this.skills.get(t)));
-				}
-			}
-		}
-		PacketUtils.sendPacket(this.player, this.getDisplayPacket(1, this.skillStats));
 		this.sendAllStats();
 	}
 
 	public void hide() {
-		if (this.show) {
-			this.show = false;
-			PacketUtils.sendPacket(this.player, this.getRemovePacket(this.skillStats));
-			for (SkillType t : SkillType.values()) {
-				if (this.skills.containsKey(t)) {
-					PacketUtils.sendPacket(this.player, this.getRemovePacket(this.skills.get(t)));
-				}
-			}
-		}
-	}
-
-	public boolean isHidden() {
-		return !this.show;
+		this.scoreboard.clearSlot(DisplaySlot.SIDEBAR);
 	}
 
 	public boolean isShown() {
-		return this.show;
+		return this.scoreboard.getObjective(DisplaySlot.SIDEBAR) != null;
 	}
 
 	public void remove() {
 		this.hide();
+
 		if (this.updater != null) {
 			this.updater.cancel();
+			this.updater = null;
 		}
-	}
-
-	private Packet208SetScoreboardDisplayObjective getDisplayPacket(int slot, ScoreboardObjective objective) {
-		return new Packet208SetScoreboardDisplayObjective(slot, objective);
-	}
-
-	private Packet206SetScoreboardObjective getCreatePacket(ScoreboardObjective objective) {
-		return new Packet206SetScoreboardObjective(objective, 0);
-	}
-
-	private Packet206SetScoreboardObjective getRemovePacket(ScoreboardObjective objective) {
-		return new Packet206SetScoreboardObjective(objective, 1);
-	}
-
-	private Packet207SetScoreboardScore getCreateScorePacket(ScoreboardScore score) {
-		return new Packet207SetScoreboardScore(score, 0);
-	}
-
-	private Packet207SetScoreboardScore getRemoveScorePacket(ScoreboardScore score) {
-		return new Packet207SetScoreboardScore(score, 1);
 	}
 
 	private class Updater extends BukkitRunnable {

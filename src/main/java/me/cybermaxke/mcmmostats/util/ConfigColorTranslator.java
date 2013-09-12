@@ -16,16 +16,30 @@
  * along with mcMMOStatsGui. If not, see <http://www.gnu.org/licenses/>.
  * 
  */
-package me.cybermaxke.mcmmostats;
+package me.cybermaxke.mcmmostats.util;
 
-import net.minecraft.server.v1_5_R2.Packet;
+import org.bukkit.ChatColor;
 
-import org.bukkit.craftbukkit.v1_5_R2.entity.CraftPlayer;
-import org.bukkit.entity.Player;
+public class ConfigColorTranslator {
+	private Character colorChar;
 
-public class PacketUtils {
+	public ConfigColorTranslator(Character character) {
+		this.colorChar = character;
+	}
 
-	public static void sendPacket(Player player, Packet packet) {
-		((CraftPlayer) player).getHandle().playerConnection.sendPacket(packet);
+	public Character getChar() {
+		return this.colorChar;
+	}
+
+	public void setColorChar(Character character) {
+		this.colorChar = character;
+	}
+
+	public String translate(String string) {
+		return this.colorChar == null ? string : string.replace(this.colorChar, ChatColor.COLOR_CHAR);
+	}
+
+	public String fix(String string) {
+		return this.colorChar == null ? string : string.replace(ChatColor.COLOR_CHAR, this.colorChar);
 	}
 }

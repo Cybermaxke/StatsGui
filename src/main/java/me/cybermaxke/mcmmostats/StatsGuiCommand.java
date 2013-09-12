@@ -23,12 +23,13 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
 
-public class GuiCommand implements CommandExecutor {
+public class StatsGuiCommand implements CommandExecutor {
+	private final StatsPlugin plugin;
 
-	public GuiCommand(JavaPlugin plugin) {
-		plugin.getCommand("statsgui").setExecutor(this);
+	public StatsGuiCommand(StatsPlugin plugin) {
+		this.plugin = plugin;
+		this.plugin.getCommand("statsgui").setExecutor(this);
 	}
 
 	@Override
@@ -39,7 +40,7 @@ public class GuiCommand implements CommandExecutor {
 		}
 
 		Player p = (Player) sender;
-		if (!Permissions.hasUseGuiPermission(p)) {
+		if (!StatsPermissions.hasUseGuiPermission(p)) {
 			p.sendMessage(ChatColor.RED + "I'm sorry, but you don't have permission to perform this command. ");
 			return true;
 		}
@@ -50,10 +51,10 @@ public class GuiCommand implements CommandExecutor {
 		}
 
 		if (args[0].equalsIgnoreCase("hide")) {
-			McMMOStats.getGui(p).hide();
+			this.plugin.getGui(p).hide();
 			sender.sendMessage("Stats gui hidden.");
 		} else if (args[0].equalsIgnoreCase("show")) {
-			McMMOStats.getGui(p).show();
+			this.plugin.getGui(p).show();
 			sender.sendMessage("Stats gui shown.");
 		} else {
 			sender.sendMessage("Please use '/statsgui [hide|show]'");

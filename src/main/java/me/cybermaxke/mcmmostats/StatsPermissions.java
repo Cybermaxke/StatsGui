@@ -24,7 +24,11 @@ import org.bukkit.permissions.PermissionDefault;
 
 import com.gmail.nossr50.datatypes.skills.SkillType;
 
-public class Permissions {
+public class StatsPermissions {
+
+	private StatsPermissions() {
+
+	}
 
 	public static boolean hasSkillPermission(Player player, SkillType type) {
 		return player.hasPermission(new Permission("mcmmo.skills." + type.toString(), PermissionDefault.OP));
