@@ -31,14 +31,14 @@ public class StatsPermissions {
 	}
 
 	public static boolean hasSkillPermission(Player player, SkillType type) {
-		return player.hasPermission(new Permission("mcmmo.skills." + type.toString(), PermissionDefault.TRUE));
+		return player.hasPermission(new Permission("mcmmogui.skills." + type.toString(), PermissionDefault.TRUE));
 	}
 
 	public static boolean hasUseGuiPermission(Player player) {
-		return player.hasPermission(new Permission("mcmmo.usegui", PermissionDefault.TRUE));
+		return player.hasPermission(new Permission("mcmmogui.usegui", PermissionDefault.TRUE));
 	}
 
 	public static boolean hasUseCommandPermission(Player player) {
-		return player.hasPermission(new Permission("mcmmo.useguicommand", PermissionDefault.TRUE));
+		return player.hasPermission(new Permission("mcmmogui.useguicommand", PermissionDefault.TRUE));
 	}
 }
