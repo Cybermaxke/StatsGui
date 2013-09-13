@@ -126,7 +126,7 @@ public class StatsPlugin extends JavaPlugin implements Listener {
 
 		if (!StatsPermissions.hasUseGuiPermission(player) ||
 				(config.contains(path) && !config.getBoolean(path)) ||
-				(!config.contains(path) && this.showByDefault)) {
+				(!config.contains(path) && !this.showByDefault)) {
 			return;
 		}
 
