@@ -55,30 +55,6 @@ public class StatsPlugin extends JavaPlugin implements Listener {
 			this.getDataFolder().mkdirs();
 		}
 
-		this.config = new Config(this);
-		this.config.add("ColorCharacter", ChatColor.COLOR_CHAR + "");
-		this.config.add("ShowByDefault", this.showByDefault);
-
-		this.languageConfig = new ConfigLanguage(this);
-		this.languageConfig.add(SkillType.ACROBATICS.toString(), "Acrobatics");
-		this.languageConfig.add(SkillType.ARCHERY.toString(), "Archery");
-		this.languageConfig.add(SkillType.AXES.toString(), "Axes");
-		this.languageConfig.add(SkillType.EXCAVATION.toString(), "Excavation");
-		this.languageConfig.add(SkillType.FISHING.toString(), "Fishing");
-		this.languageConfig.add(SkillType.HERBALISM.toString(), "Herbalism");
-		this.languageConfig.add(SkillType.MINING.toString(), "Mining");
-		this.languageConfig.add(SkillType.REPAIR.toString(), "Repairing");
-		this.languageConfig.add(SkillType.SWORDS.toString(), "Swords");
-		this.languageConfig.add(SkillType.TAMING.toString(), "Taming");
-		this.languageConfig.add(SkillType.UNARMED.toString(), "Unarmed");
-		this.languageConfig.add(SkillType.WOODCUTTING.toString(), "Woodcutting");
-		this.languageConfig.add(SkillType.SMELTING.toString(), "Smelting");
-		this.languageConfig.add("LEVEL", "Level");
-		this.languageConfig.add("REQUIRED_XP", "Required XP");
-		this.languageConfig.add("EARNED_XP", "Earned XP");
-		this.languageConfig.add("POWER_LEVEL", "Power Level");
-		this.languageConfig.add("SKILL_STATS", "Skill Stats");
-
 		try {
 			this.config = new Config(this);
 			this.config.add("ColorCharacter", ChatColor.COLOR_CHAR + "");
