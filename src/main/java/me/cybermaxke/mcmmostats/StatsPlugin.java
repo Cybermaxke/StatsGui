@@ -124,10 +124,13 @@ public class StatsPlugin extends JavaPlugin implements Listener {
 		String path = "shown." + player.getName();
 		YamlConfiguration config = this.config.getConfig();
 
-		if (((config.contains(path) && config.getBoolean(path)) || this.showByDefault) &&
-				StatsPermissions.hasUseGuiPermission(player)) {
-			gui.show();
+		if (!StatsPermissions.hasUseGuiPermission(player) ||
+				(config.contains(path) && !config.getBoolean(path)) ||
+				(!config.contains(path) && this.showByDefault)) {
+			return;
 		}
+
+		gui.show();
 	}
 
 	@EventHandler
