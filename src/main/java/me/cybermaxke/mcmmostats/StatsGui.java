@@ -46,6 +46,7 @@ public class StatsGui {
 
 	private McMMOPlayer mcplayer;
 	private Objective skillStats;
+	private boolean show;
 
 	private int ticksBeforeReturn = 200;
 	private Updater updater;
@@ -110,6 +111,10 @@ public class StatsGui {
 	}
 
 	public void sendScores(Objective objective, Map<String, Integer> values) {
+		if (!this.show) {
+			return;
+		}
+
 		if (this.last.containsKey(objective.getName())) {
 			for (String old : this.last.get(objective.getName())) {
 				this.scoreboard.resetScores(Bukkit.getOfflinePlayer(old));
@@ -125,15 +130,17 @@ public class StatsGui {
 	}
 
 	public void show() {
+		this.show = true;
 		this.sendAllStats();
 	}
 
 	public void hide() {
+		this.show = false;
 		this.scoreboard.clearSlot(DisplaySlot.SIDEBAR);
 	}
 
 	public boolean isShown() {
-		return this.scoreboard.getObjective(DisplaySlot.SIDEBAR) != null;
+		return this.show;
 	}
 
 	public void remove() {
