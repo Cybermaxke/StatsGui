@@ -1,22 +1,22 @@
 /**
  * 
- * This software is part of the mcMMOStatsGui
+ * This software is part of the StatsGui
  * 
- * mcMMOStatsGui is free software: you can redistribute it and/or modify
+ * StatsGui is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or 
  * any later version.
  *  
- * mcMMOStatsGui is distributed in the hope that it will be useful,
+ * StatsGui is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with mcMMOStatsGui. If not, see <http://www.gnu.org/licenses/>.
+ * along with StatsGui. If not, see <http://www.gnu.org/licenses/>.
  * 
  */
-package me.cybermaxke.mcmmostats.util;
+package me.cybermaxke.statsgui.api.utils;
 
 import java.io.File;
 import java.io.IOException;
@@ -26,7 +26,6 @@ import java.util.Map.Entry;
 
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.plugin.Plugin;
 
 public class Config {
 	private final Map<String, Object> defaults = new HashMap<String, Object>();
@@ -34,9 +33,9 @@ public class Config {
 	private final File file;
 	private final YamlConfiguration config;
 
-	public Config(Plugin plugin) {
-		this.folder = plugin.getDataFolder();
-		this.file = new File(this.folder, "config.yml");
+	public Config(File file) {
+		this.folder = file.getParentFile();
+		this.file = file;
 		this.config = new YamlConfiguration();
 	}
 

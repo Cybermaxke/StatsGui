@@ -3,7 +3,7 @@ main: ${mainclass}
 version: ${project.version}
 description: ${project.description}
 author: ${author}
-depend: [mcMMO]
+softdepend: [mcMMO,MobArena,Vault]
 commands:
    StatsGui:
       description: Hide or show the mcMMO stats gui.

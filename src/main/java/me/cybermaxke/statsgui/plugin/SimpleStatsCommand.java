@@ -1,22 +1,24 @@
 /**
  * 
- * This software is part of the mcMMOStatsGui
+ * This software is part of the StatsGui
  * 
- * mcMMOStatsGui is free software: you can redistribute it and/or modify
+ * StatsGui is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or 
  * any later version.
  *  
- * mcMMOStatsGui is distributed in the hope that it will be useful,
+ * StatsGui is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with mcMMOStatsGui. If not, see <http://www.gnu.org/licenses/>.
+ * along with StatsGui. If not, see <http://www.gnu.org/licenses/>.
  * 
  */
-package me.cybermaxke.mcmmostats;
+package me.cybermaxke.statsgui.plugin;
+
+import me.cybermaxke.statsgui.api.Stats;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -24,13 +26,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class StatsGuiCommand implements CommandExecutor {
-	private final StatsPlugin plugin;
-
-	public StatsGuiCommand(StatsPlugin plugin) {
-		this.plugin = plugin;
-		this.plugin.getCommand("statsgui").setExecutor(this);
-	}
+public class SimpleStatsCommand implements CommandExecutor {
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
@@ -39,9 +35,10 @@ public class StatsGuiCommand implements CommandExecutor {
 			return true;
 		}
 
-		Player p = (Player) sender;
-		if (!StatsPermissions.hasUseGuiPermission(p)) {
-			p.sendMessage(ChatColor.RED + "I'm sorry, but you don't have permission to perform this command. ");
+		Player player = (Player) sender;
+		if (!SimpleStatsPermissions.hasUseCommandPermission(player)) {
+			player.sendMessage(ChatColor.RED +
+					"I'm sorry, but you don't have permission to perform this command.");
 			return true;
 		}
 
@@ -51,10 +48,10 @@ public class StatsGuiCommand implements CommandExecutor {
 		}
 
 		if (args[0].equalsIgnoreCase("hide")) {
-			this.plugin.getGui(p).hide();
+			Stats.get().getGui(player).setShown(false);
 			sender.sendMessage("Stats gui hidden.");
 		} else if (args[0].equalsIgnoreCase("show")) {
-			this.plugin.getGui(p).show();
+			Stats.get().getGui(player).setShown(true);
 			sender.sendMessage("Stats gui shown.");
 		} else {
 			sender.sendMessage("Please use '/statsgui [hide|show]'");

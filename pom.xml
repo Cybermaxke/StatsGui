@@ -1,15 +1,15 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>cybermaxke</groupId>
-	<artifactId>mcMMOStats</artifactId>
+	<artifactId>statsgui</artifactId>
 	<version>dev-SNAPSHOT</version>
-	<name>mcMMOStats</name>
-	<description>Show the skills stats to you.</description>
+	<name>StatsGui</name>
+	<description>Shows diffirent types of stats on a scoreboard.</description>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<mainclass>me.cybermaxke.mcmmostats.StatsPlugin</mainclass>
+		<mainclass>me.cybermaxke.statsgui.plugin.SimpleStatsPlugin</mainclass>
 		<author>Cybermaxke</author>
 	</properties>
 	
@@ -23,6 +23,11 @@
 		<repository>
 			<id>mcmmo-repo</id>
 			<url>http://repo.mcmmo.info/</url>
+		</repository>
+
+		<repository>
+			<id>vault-repo</id>
+			<url>http://ci.herocraftonline.com/plugin/repository/everything</url>
 		</repository>
 	</repositories>
 	
@@ -38,6 +43,12 @@
 			<groupId>com.gmail.nossr50.mcMMO</groupId>
 			<artifactId>mcMMO</artifactId>
 			<version>1.4.07-dev1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>net.milkbowl.vault</groupId>
+			<artifactId>Vault</artifactId>
+			<version>1.2.27</version>
 		</dependency>
 	</dependencies>
   
