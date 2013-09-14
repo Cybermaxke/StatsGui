@@ -302,8 +302,10 @@ public class SimpleStatsGui implements StatsGui {
 						index = 0;
 					}
 
-					objective = SimpleStatsGui.this.objectivesDynamic.get(index);
-					if (objective.isUsable(SimpleStatsGui.this)) {
+					StatsGuiObjective objective1 = SimpleStatsGui.this.objectivesDynamic
+							.get(index);
+					if (objective1.isUsable(SimpleStatsGui.this)) {
+						objective = objective1;
 						break;
 					}
 
@@ -313,10 +315,6 @@ public class SimpleStatsGui implements StatsGui {
 					if (index == SimpleStatsGui.this.dynamicIndex) {
 						break;
 					}
-				}
-
-				if (index >= SimpleStatsGui.this.objectivesDynamic.size()) {
-					index = 0;
 				}
 
 				SimpleStatsGui.this.dynamicIndex = index;
