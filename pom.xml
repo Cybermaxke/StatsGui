@@ -11,6 +11,7 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<mainclass>me.cybermaxke.statsgui.plugin.SimpleStatsPlugin</mainclass>
 		<author>Cybermaxke</author>
+		<depends>mcMMO,MobArena,Vault,Factions</depends>
 	</properties>
 	
 	<!-- Repositories -->

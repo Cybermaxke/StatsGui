@@ -19,6 +19,7 @@
 package me.cybermaxke.statsgui.plugin.hook;
 
 import me.cybermaxke.statsgui.plugin.hook.economy.StatsEconomy;
+import me.cybermaxke.statsgui.plugin.hook.factions.StatsFactions;
 import me.cybermaxke.statsgui.plugin.hook.mcmmo.StatsMcMMO;
 import me.cybermaxke.statsgui.plugin.hook.mobarena.StatsMobArena;
 
@@ -36,5 +37,9 @@ public class StatsHookManager {
 
 	public void hookVault(Plugin plugin, Character colorChar) {
 		new StatsEconomy(plugin, colorChar);
+	}
+
+	public void hookFactions(Plugin plugin, Character colorChar) {
+		new StatsFactions(plugin, colorChar);
 	}
 }

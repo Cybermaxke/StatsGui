@@ -46,6 +46,7 @@ public class SimpleStatsPlugin extends JavaPlugin implements StatsAPI, Listener 
 	private boolean hookMcMMO = true;
 	private boolean hookMobArena = true;
 	private boolean hookEconomy = true;
+	private boolean hookFactions = true;
 	private boolean showByDefault = true;
 
 	@Override
@@ -57,9 +58,11 @@ public class SimpleStatsPlugin extends JavaPlugin implements StatsAPI, Listener 
 		 */
 		try {
 			this.config = new Config(new File(this.getDataFolder(), "config.yml"));
+
 			this.config.add("hook.mcmmo", this.hookMcMMO);
 			this.config.add("hook.mobarena", this.hookMobArena);
 			this.config.add("hook.economy", this.hookEconomy);
+			this.config.add("hook.factions", this.hookFactions);
 
 			this.config.add("colorcharacter", this.colorChar + "");
 			this.config.add("showbydefault", this.showByDefault);
@@ -69,6 +72,7 @@ public class SimpleStatsPlugin extends JavaPlugin implements StatsAPI, Listener 
 			this.hookMcMMO = this.config.get("hook.mcmmo", Boolean.class);
 			this.hookMobArena = this.config.get("hook.mobarena", Boolean.class);
 			this.hookEconomy = this.config.get("hook.economy", Boolean.class);
+			this.hookFactions = this.config.get("hook.factions", Boolean.class);
 
 			this.showByDefault = this.config.get("showbydefault", Boolean.class);
 			this.colorChar = this.config.get("colorcharacter", String.class).charAt(0);
@@ -91,6 +95,9 @@ public class SimpleStatsPlugin extends JavaPlugin implements StatsAPI, Listener 
 		}
 		if (this.hookEconomy) {
 			hookManager.hookVault(this, this.colorChar);
+		}
+		if (this.hookFactions) {
+			hookManager.hookFactions(this, this.colorChar);
 		}
 	}
 
