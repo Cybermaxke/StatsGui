@@ -30,6 +30,11 @@
 			<id>vault-repo</id>
 			<url>http://ci.herocraftonline.com/plugin/repository/everything</url>
 		</repository>
+
+		<repository>
+			<id>local-repo</id>
+			<url>file:${project.basedir}/repo</url>
+		</repository>
 	</repositories>
 	
 	<!-- Dependencies -->
@@ -51,8 +56,26 @@
 			<artifactId>Vault</artifactId>
 			<version>1.2.27</version>
 		</dependency>
+
+		<dependency>
+			<groupId>com.massivecraft</groupId>
+			<artifactId>mcore</artifactId>
+			<version>7.0.1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.massivecraft</groupId>
+			<artifactId>factions</artifactId>
+			<version>2.3.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.garbagemule</groupId>
+			<artifactId>mobarena</artifactId>
+			<version>0.95.5</version>
+		</dependency>
 	</dependencies>
-  
+
 	<!-- Build configuration -->
 	<build>
 		<defaultGoal>clean install</defaultGoal>

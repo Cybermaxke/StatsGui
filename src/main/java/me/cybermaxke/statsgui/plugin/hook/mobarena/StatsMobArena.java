@@ -22,47 +22,31 @@ import me.cybermaxke.statsgui.api.Stats;
 import me.cybermaxke.statsgui.api.StatsGui;
 import me.cybermaxke.statsgui.api.StatsGuiCheck;
 
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.Plugin;
 
+import com.garbagemule.MobArena.MobArena;
+
 public class StatsMobArena implements Listener, StatsGuiCheck {
-	private Plugin mobArena;
+	private final MobArena mobArena;
+	private final Plugin plugin;
 
 	public StatsMobArena(Plugin plugin) {
-		this.mobArena = plugin.getServer().getPluginManager().getPlugin("MobArena");
+		this.plugin = plugin;
 
-		if (this.mobArena == null) {
-			return;
+		if (!this.plugin.getServer().getPluginManager().isPluginEnabled("MobArena")) {
+			this.mobArena = (MobArena) plugin.getServer().getPluginManager().getPlugin("MobArena");
+			this.plugin.getServer().getPluginManager().registerEvents(this, plugin);
+		} else {
+			this.mobArena = null;
 		}
-
-		plugin.getServer().getPluginManager().registerEvents(this, plugin);
 	}
 
 	@Override
 	public boolean canShow(StatsGui gui) {
-
-		/**
-		 * There is no maven repo, so reflection...
-		 */
-		try {
-			Object arenaMaster = this.mobArena.getClass()
-					.getMethod("getArenaMaster", new Class[] {})
-					.invoke(this.mobArena, new Object[] {});
-			Object arena = arenaMaster.getClass()
-					.getMethod("getArenaWithPlayer", Player.class)
-					.invoke(arenaMaster, gui.getPlayer());
-
-			if (arena != null) {
-				return false;
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		return true;
+		return this.mobArena.getArenaMaster().getArenaWithPlayer(gui.getPlayer()) == null;
 	}
 
 	@EventHandler

@@ -20,7 +20,6 @@ package me.cybermaxke.statsgui.plugin.hook.factions;
 
 import java.io.File;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import me.cybermaxke.statsgui.api.Stats;
@@ -34,9 +33,9 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.Plugin;
 
-/**
- * Factions doesn't use maven so we need to use reflection.
- */
+import com.massivecraft.factions.entity.Faction;
+import com.massivecraft.factions.entity.UPlayer;
+
 public class StatsFactions implements Listener, StatsGuiObjective {
 	private ConfigLanguage languageConfig;
 
@@ -66,99 +65,30 @@ public class StatsFactions implements Listener, StatsGuiObjective {
 	@Override
 	public Map<String, Integer> getStats(StatsGui gui) {
 		Player player = gui.getPlayer();
-		Object faction = this.getFaction(player);
+		Faction faction = UPlayer.get(player).getFaction();
 
 		Map<String, Integer> stats = new HashMap<String, Integer>();
 
-		stats.put(this.languageConfig.get("power"), this.getFactionPower(faction));
-		stats.put(this.languageConfig.get("landcount"), this.getFactionLand(faction));
-		stats.put(this.languageConfig.get("players"), this.getFactionPlayers(faction).size());
-		stats.put(this.languageConfig.get("onlineplayers"),
-				this.getFactionOnlinePlayers(faction).size());
+		stats.put(this.languageConfig.get("power"), faction.getPowerRounded());
+		stats.put(this.languageConfig.get("landcount"), faction.getLandCount());
+		stats.put(this.languageConfig.get("players"), faction.getUPlayers().size());
+		stats.put(this.languageConfig.get("onlineplayers"), faction.getOnlinePlayers().size());
 
 		return stats;
 	}
 
 	@Override
 	public String getTitle(StatsGui gui) {
-		return this.getFactionName(this.getFaction(gui.getPlayer()));
+		return UPlayer.get(gui.getPlayer()).getFaction().getName();
 	}
 
 	@Override
 	public boolean isUsable(StatsGui gui) {
-		return this.hasFaction(gui.getPlayer());
+		return UPlayer.get(gui.getPlayer()).hasFaction();
 	}
 
 	@EventHandler
 	public void onPlayerJoin(PlayerJoinEvent e) {
 		Stats.get().getGui(e.getPlayer()).addDynamicObjective(this);
-	}
-
-	public List<?> getFactionPlayers(Object faction) {
-		return (List<?>) this.getFactionMethod("getUPlayers", faction);
-	}
-
-	public List<?> getFactionOnlinePlayers(Object faction) {
-		return (List<?>) this.getFactionMethod("getOnlinePlayers", faction);
-	}
-
-	public int getFactionLand(Object faction) {
-		return (Integer) this.getFactionMethod("getLandCount", faction);
-	}
-
-	public int getFactionPower(Object faction) {
-		return (Integer) this.getFactionMethod("getPowerRounded", faction);
-	}
-
-	public String getFactionName(Object faction) {
-		return (String) this.getFactionMethod("getName", faction);
-	}
-
-	public Object getFactionMethod(String method, Object faction) {
-		try {
-			return (String) Class.forName("com.massivecraft.factions.entity.Faction")
-					.getMethod(method, new Class[] {})
-					.invoke(faction, new Object[] {});
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		return null;
-	}
-
-	public boolean hasFaction(Player player) {
-		try {
-			return (Boolean) Class.forName("com.massivecraft.factions.entity.UPlayer")
-					.getMethod("hasFaction", new Class[] {})
-					.invoke(this.getUPlayer(player), new Object[] {});
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		return false;
-	}
-
-	public Object getFaction(Player player) {
-		try {
-			return Class.forName("com.massivecraft.factions.entity.UPlayer")
-					.getMethod("getFaction", new Class[] {})
-					.invoke(this.getUPlayer(player), new Object[] {});
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		return null;
-	}
-
-	public Object getUPlayer(Player player) {
-		try {
-			return Class.forName("com.massivecraft.factions.entity.UPlayer")
-					.getMethod("get", Player.class)
-					.invoke(null, player);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		return null;
 	}
 }
