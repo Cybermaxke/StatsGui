@@ -36,7 +36,7 @@ public class StatsMobArena implements Listener, StatsGuiCheck {
 	public StatsMobArena(Plugin plugin) {
 		this.plugin = plugin;
 
-		if (!this.plugin.getServer().getPluginManager().isPluginEnabled("MobArena")) {
+		if (this.plugin.getServer().getPluginManager().isPluginEnabled("MobArena")) {
 			this.mobArena = (MobArena) plugin.getServer().getPluginManager().getPlugin("MobArena");
 			this.plugin.getServer().getPluginManager().registerEvents(this, plugin);
 		} else {

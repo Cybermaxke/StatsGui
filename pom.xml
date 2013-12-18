@@ -1,5 +1,6 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
+
 	<groupId>cybermaxke</groupId>
 	<artifactId>statsgui</artifactId>
 	<version>dev-SNAPSHOT</version>
@@ -13,7 +14,7 @@
 		<author>Cybermaxke</author>
 		<depends>mcMMO,MobArena,Vault,Factions</depends>
 	</properties>
-	
+
 	<!-- Repositories -->
 	<repositories>
 		<repository>
@@ -21,10 +22,11 @@
 			<url>http://repo.bukkit.org/content/groups/public/</url>
 		</repository>
 
+<!-- 
 		<repository>
 			<id>mcmmo-repo</id>
 			<url>http://repo.mcmmo.info/</url>
-		</repository>
+		</repository> -->
 
 		<repository>
 			<id>vault-repo</id>
@@ -73,6 +75,12 @@
 			<groupId>com.garbagemule</groupId>
 			<artifactId>mobarena</artifactId>
 			<version>0.95.5</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.gmail.nossr50.mcMMO</groupId>
+			<artifactId>mcMMO</artifactId>
+			<version>1.4.07</version>
 		</dependency>
 	</dependencies>
 

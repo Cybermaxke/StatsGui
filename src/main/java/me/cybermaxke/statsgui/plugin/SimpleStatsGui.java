@@ -19,11 +19,8 @@
 package me.cybermaxke.statsgui.plugin;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
-import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -45,14 +42,11 @@ public class SimpleStatsGui implements StatsGui {
 	private final List<StatsGuiObjective> objectivesDynamic = new ArrayList<StatsGuiObjective>();
 	private final List<StatsGuiCheck> checks = new ArrayList<StatsGuiCheck>();
 
-	private final Map<String, StatsGuiObjective> objectivesById =
-			new HashMap<String, StatsGuiObjective>();
-	private final Map<StatsGuiObjective, String> objectiveIdsByObjective =
-			new HashMap<StatsGuiObjective, String>();
-
-	private final Scoreboard scoreboard;
 	private final Player player;
 	private final Plugin plugin;
+
+	private final Scoreboard scoreboard;
+	private final Objective objective;
 
 	private StatsGuiObjective current;
 	private StatsUpdater updater;
@@ -74,6 +68,7 @@ public class SimpleStatsGui implements StatsGui {
 		this.plugin = plugin;
 		this.updater = new StatsUpdater();
 		this.scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
+		this.objective = this.scoreboard.registerNewObjective("objective", "dummy");
 	}
 
 	@Override
@@ -112,7 +107,6 @@ public class SimpleStatsGui implements StatsGui {
 		}
 
 		this.objectivesDynamic.add(objective);
-		this.addObjective(objective);
 	}
 
 	@Override
@@ -148,11 +142,6 @@ public class SimpleStatsGui implements StatsGui {
 	@Override
 	public void setObjective(StatsGuiObjective objective) {
 		this.current = objective;
-
-		if (this.current != null) {
-			this.addObjective(objective); /** Be sure that it's added. */
-		}
-
 		this.update(); /** Update directly. */
 	}
 
@@ -198,18 +187,17 @@ public class SimpleStatsGui implements StatsGui {
 		/**
 		 * Add the new stats.
 		 */
-		Objective objective = this.getObjective(this.current);
 		for (Entry<String, Integer> en : this.current.getStats(this).entrySet()) {
-			objective.getScore(Bukkit.getOfflinePlayer(en.getKey())).setScore(en.getValue());
+			this.objective.getScore(Bukkit.getOfflinePlayer(en.getKey())).setScore(en.getValue());
 		}
 
 		/**
 		 * Set the title and make it visible on the scoreboard.
 		 */
-		objective.setDisplayName(this.current.getTitle(this));
-		objective.setDisplaySlot(DisplaySlot.SIDEBAR);
+		this.objective.setDisplayName(this.current.getTitle(this));
+		this.objective.setDisplaySlot(DisplaySlot.SIDEBAR);
 
-		if (this.canShow() && this.show) {
+		if (this.canShow() && this.show && this.player.getScoreboard() != this.scoreboard) {
 			this.player.setScoreboard(this.scoreboard);
 		}
 	}
@@ -229,44 +217,6 @@ public class SimpleStatsGui implements StatsGui {
 		}
 
 		return true;
-	}
-
-	public Objective getObjective(StatsGuiObjective objective) {
-		return this.scoreboard.getObjective(this.objectiveIdsByObjective.get(objective));
-	}
-
-	public String getId(StatsGuiObjective objective) {
-		return this.objectiveIdsByObjective.get(objective);
-	}
-
-	public void addObjective(StatsGuiObjective objective) {
-		/**
-		 * Check if it already exists.
-		 */
-		if (this.getId(objective) != null) {
-			return;
-		}
-
-		/**
-		 * Generating a custom id, with a max length of 16 chars.
-		 */
-		String id = null;
-
-		while (true) {
-			UUID uuid = UUID.randomUUID();
-			id = uuid.toString().substring(0, 16);
-
-			if (!this.objectivesById.containsKey(id)) {
-				this.objectivesById.put(id, objective);
-				this.objectiveIdsByObjective.put(objective, id);
-				break;
-			}
-		}
-
-		/**
-		 * Registering a new objective to the scoreboard.
-		 */
-		this.scoreboard.registerNewObjective(id, "dummy");
 	}
 
 	public class StatsUpdater extends BukkitRunnable {
