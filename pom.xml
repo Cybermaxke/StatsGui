@@ -1,18 +1,20 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
+	<!-- Project information -->
 	<groupId>cybermaxke</groupId>
 	<artifactId>statsgui</artifactId>
 	<version>dev-SNAPSHOT</version>
 	<name>StatsGui</name>
 	<description>Shows diffirent types of stats on a scoreboard.</description>
 
+	<!-- Build properties -->
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<mainclass>me.cybermaxke.statsgui.plugin.SimpleStatsPlugin</mainclass>
-		<author>Cybermaxke</author>
 		<depends>mcMMO,MobArena,Vault,Factions</depends>
+		<author>Cybermaxke</author>
 	</properties>
 
 	<!-- Repositories -->
@@ -21,12 +23,6 @@
 			<id>bukkit-repo</id>
 			<url>http://repo.bukkit.org/content/groups/public/</url>
 		</repository>
-
-<!-- 
-		<repository>
-			<id>mcmmo-repo</id>
-			<url>http://repo.mcmmo.info/</url>
-		</repository> -->
 
 		<repository>
 			<id>vault-repo</id>

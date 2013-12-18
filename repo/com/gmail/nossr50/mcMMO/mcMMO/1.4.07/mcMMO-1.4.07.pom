@@ -1,7 +1,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>com.garbagemule</groupId>
-	<version>0.95.5</version>
-	<name>MobArena</name>
-	<artifactId>mobarena</artifactId>
+	<groupId>com.gmail.nossr50.mcMMO</groupId>
+	<version>1.4.07</version>
+	<name>mcMMO</name>
+	<artifactId>mcMMO</artifactId>
 </project>
